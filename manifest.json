@@ -1,0 +1,9 @@
+{
+  "name": "GIF Fullscreen",
+  "short_name": "GIF",
+  "start_url": "./",
+  "display": "fullscreen",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "any"
+}
