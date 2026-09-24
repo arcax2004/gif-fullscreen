@@ -2,13 +2,10 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
 
-    <title>GIF Fullscreen</title>
+    <title>GIF</title>
 
     <link rel="manifest" href="./manifest.json">
 
@@ -19,7 +16,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background: #000000;
+            background: #000;
             overflow: hidden;
         }
 
@@ -29,27 +26,75 @@
             justify-content: center;
         }
 
-        img {
+        #gif {
             width: 100%;
             height: 100%;
             object-fit: contain;
             display: block;
         }
-    </style>
 
-    <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("./sw.js");
+        #install {
+            position: fixed;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            z-index: 10;
+            padding: 12px 22px;
+            border: 0;
+            border-radius: 10px;
+            background: white;
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+            display: none;
         }
-    </script>
+    </style>
 </head>
 
 <body>
 
     <img
+        id="gif"
         src="https://i.pinimg.com/originals/2d/cd/55/2dcd55b82d0c01a3bec803be0d8d4935.gif"
-        alt="GIF"
+        alt=""
     >
+
+    <button id="install">
+        Installa GIF
+    </button>
+
+    <script>
+        const installButton = document.getElementById("install");
+
+        let deferredPrompt = null;
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("./sw.js").catch(() => {});
+        }
+
+        window.addEventListener("beforeinstallprompt", (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            installButton.style.display = "block";
+        });
+
+        installButton.addEventListener("click", async () => {
+            if (!deferredPrompt) {
+                return;
+            }
+
+            deferredPrompt.prompt();
+
+            await deferredPrompt.userChoice;
+
+            deferredPrompt = null;
+            installButton.style.display = "none";
+        });
+
+        window.addEventListener("appinstalled", () => {
+            installButton.style.display = "none";
+        });
+    </script>
 
 </body>
 </html>
